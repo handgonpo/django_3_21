@@ -17,9 +17,9 @@ def HtmlTemplate(articleTag):
         <html>
         <body>
             <h1>Django</h1>
-            <ol>
+            <ul>
                 {ol}
-            </ol>
+            </ul>
             {articleTag}
         </body>
         </html>
@@ -36,6 +36,17 @@ def index(request):
 
 
 def read(request, id):
+    global topics
+    article = ""
+
+    # id를 정수형으로 변환
+    id = int(id)
+
+    for topic in topics:
+        print(topic["id"], type(id))
+        if topic["id"] == id:
+            article = f'<h2>{topic["title"]}<h2>{topic["body"]}'
+            return HttpResponse(HtmlTemplate(article))
     return HttpResponse("Hello, world. Read!" + id)
 
 
