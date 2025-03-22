@@ -1,19 +1,12 @@
-from django.shortcuts import render, HttpResponse
-
-topics = [
-    {"id": 1, "title": "routing", "body": "Routing is..."},
-    {"id": 2, "title": "view", "body": "View is..."},
-    {"id": 3, "title": "model", "body": "Model is..."},
-]
-
+from django.shortcuts import render, HttpResponse, get_object_or_404
+from .models import Topic
 
 def HtmlTemplate(articleTag):
-    global topics
+    topics = Topic.objects.all()
     ol = ""
     for topic in topics:
-        ol += f"<li><a href='/read/{topic["id"]}'>{topic['title']}</a></li>"
-    return HttpResponse(
-        f"""
+        ol += f"<li><a href='/read/{topic.id}/'>{topic.title}</a></li>"
+    return f"""
         <html>
         <body>
             <h1>Django</h1>
@@ -23,32 +16,19 @@ def HtmlTemplate(articleTag):
             {articleTag}
         </body>
         </html>
-        """
-    )
-
+    """
 
 def index(request):
     articleTag = """
-    <h2>Welcom</h2>
+    <h2>Welcome</h2>
     hello, Django
     """
     return HttpResponse(HtmlTemplate(articleTag))
 
-
 def read(request, id):
-    global topics
-    article = ""
-
-    # id를 정수형으로 변환
-    id = int(id)
-
-    for topic in topics:
-        print(topic["id"], type(id))
-        if topic["id"] == id:
-            article = f'<h2>{topic["title"]}<h2>{topic["body"]}'
-            return HttpResponse(HtmlTemplate(article))
-    return HttpResponse("Hello, world. Read!" + id)
-
+    topic = get_object_or_404(Topic, pk=id)
+    article = f"<h2>{topic.title}</h2>{topic.body}"
+    return HttpResponse(HtmlTemplate(article))
 
 def create(request):
     return HttpResponse("Hello, world. Create!")

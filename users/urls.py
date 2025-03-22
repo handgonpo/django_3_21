@@ -3,6 +3,6 @@ from . import views  # .의 뜻은 현재 위치를 뜻하며 from users import 
 
 urlpatterns = [
     path("", views.index),
-    path("create/", views.create),
     path("read/<id>/", views.read),
+    path("create/", views.create),
 ]
