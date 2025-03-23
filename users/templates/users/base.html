@@ -1,4 +1,5 @@
 <!-- users/templates/users/base.html -->
+{% load static %}
 <html>
     <head>
         <meta charset="UTF-8">
@@ -10,15 +11,11 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Boldonse&display=swap" rel="stylesheet">
-        <style>
-            .boldonse-regular {
-                font-family: "Boldonse", system-ui;
-                font-weight: 400;
-                font-style: normal;
-            }
-        </style>
+      
+        <!-- 외부 CSS 파일 -->
+        <link rel="stylesheet" href="{% static 'users/css/style.css' %}">
     </head>  
-    <body style="padding:20px;">
+    <body>
         <h1 class="boldonse-regular">Django</h1>
         <!-- Topic 목록 (모든 템플릿에서 공통으로 보여주고 싶다면) -->
         <ul>
