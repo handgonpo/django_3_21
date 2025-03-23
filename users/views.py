@@ -14,10 +14,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 def HtmlTemplate(articleTag):
     """
-    HTML 템플릿을 생성하는 함수입니다.
-    - articleTag: 동적으로 추가할 콘텐츠(예: 본문, 폼 등)를 전달받습니다.
+    HTML 템플릿을 생성하는 함수.
+    - articleTag: 동적으로 추가할 콘텐츠(예: 본문, 폼 등)를 전달받는다.
     - 이 함수는 데이터베이스에 저장된 모든 Topic 객체를 가져와서
-      각 Topic의 제목과 상세 페이지로 연결되는 링크 목록(ul)을 만들어 HTML에 포함시킵니다.
+      각 Topic의 제목과 상세 페이지로 연결되는 링크 목록(ul)을 만들어 HTML에 포함시킨다.
     """
     # Topic 테이블의 모든 레코드를 가져옵니다.
     topics = Topic.objects.all()
@@ -69,7 +69,13 @@ def read(request, id):
     # id에 해당하는 Topic 객체를 가져옵니다. 없으면 404 에러 발생!
     topic = get_object_or_404(Topic, pk=id)
     # Topic의 제목과 본문(body)을 포함한 HTML 문자열을 생성합니다.
-    article = f"<h2>{topic.title}</h2>{topic.body}"
+    article = f"""
+    <h2>{topic.title}</h2>{topic.body}
+    <form method="post" action="/delete/">
+        <input type="hidden" name="id" value="{topic.id}">
+        <p><input type="submit" value="delete"></p>
+    </form>
+    """
     # 완성된 HTML을 반환합니다.
     return HttpResponse(HtmlTemplate(article))
 
@@ -128,3 +134,14 @@ def create(request):
 
         # 새 Article 생성 후, /create/ 페이지로 이동(리다이렉트)하여 갱신된 목록을 보여준다.
         return redirect("/create/")
+
+
+@csrf_exempt
+def delete(request):
+    if request.method == "POST":
+        topic_id = request.POST.get("id")
+        topic = get_object_or_404(Topic, pk=topic_id)
+        topic.delete()
+        return redirect("/")
+    return redirect("/")
+    

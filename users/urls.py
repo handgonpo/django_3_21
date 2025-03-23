@@ -5,4 +5,5 @@ urlpatterns = [
     path("", views.index),
     path("read/<id>/", views.read),
     path("create/", views.create),
+    path("delete/", views.delete)
 ]
