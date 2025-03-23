@@ -74,29 +74,30 @@ def read(request, id):
     return HttpResponse(HtmlTemplate(article))
 
 
-@csrf_exempt  # CSRF 보호를 비활성화합니다. (실제 서비스에서는 보안 이슈가 될 수 있으므로 주의!)
+@csrf_exempt
+# CSRF 보호를 비활성화합니다. (실제 서비스에서는 보안 이슈가 될 수 있으므로 주의!)
 def create(request):
     """
-    Article(Topic) 생성 페이지 뷰 함수입니다.
-    
+    Topic 생성 페이지 뷰 함수
+
     - GET 요청 시:
-      1. DB에 저장된 모든 Article(Topic)의 제목 목록을 보여주고,
-      2. 새 Article을 등록할 수 있는 폼(form)을 제공합니다.
-      
+      1. DB에 저장된 모든 Topic의 제목 목록을 보여주고,
+      2. 새 글을 등록할 수 있는 폼(form)을 제공.
+
     - POST 요청 시:
       1. 폼에서 전달된 title(제목)과 body(본문) 데이터를 받아,
-      2. 새로운 Article(Topic)을 데이터베이스에 생성한 후,
-      3. 다시 /create/ 페이지로 리다이렉트하여 목록을 갱신합니다.
+      2. 새로운 Topic을 데이터베이스에 생성한 후,
+      3. 다시 /create/ 페이지로 리다이렉트하여 목록을 갱신.
     """
     # 요청 방식(GET, POST 등)을 확인합니다.
-    # print(request.method)  # 요청 방식을 콘솔에 출력할 수 있습니다.
+    # print(request.method)  # 요청 방식을 콘솔에 출력할 수 있다.
     if request.method == "GET":
-        # GET 요청: 사용자가 페이지에 접속했을 때, Article 등록 폼을 보여줍니다.
-        
-        # 데이터베이스에서 모든 Topic(Article) 객체를 가져옵니다.
+        # GET 요청: 사용자가 create버튼을 클릭했을때 등록 폼을 보여준다.
+
+        # 데이터베이스에서 모든 Topic 객체를 가져온다.
         topics = Topic.objects.all()
-        
-        # 새 Article을 등록할 수 있는 HTML 폼을 작성합니다.
+
+        # 새 글(article)을 등록할 수 있는 HTML 폼을 작성한다.
         article = """
             <form action="/create/" method="post">
                 <p><input type="text" name="title" placeholder="title"></p>
@@ -104,28 +105,26 @@ def create(request):
                 <p><input type="submit"></p>
             </form>
         """
-
-        # 아래의 코드는 현재 DB에 저장된 Article들의 제목 목록을 만드는 예시입니다.
-        # 하지만 HtmlTemplate 함수 내에서 이미 모든 Topic의 제목 목록을 보여주기 때문에
-        # 실제로는 따로 사용되지 않습니다.
-        topic_list = "<ul>"
-        for t in topics:
-            topic_list += f"<li>{t.title}</li>"
-        topic_list += "</ul>"
-
         # 완성된 폼을 포함한 HTML을 반환합니다.
         return HttpResponse(HtmlTemplate(article))
+    
     elif request.method == "POST":
-        # POST 요청: 폼 제출 후, 새로운 Article(Topic)을 생성하는 과정입니다.
-        
-        # 폼으로부터 전송된 데이터를 추출합니다.
-        # get 메서드를 사용하여 title과 body 값을 가져오며,
-        # 해당 값이 없으면 빈 문자열("")을 기본값으로 사용합니다.
+    # POST 요청: 폼 제출 후, 새로운 Topic을 생성하는 과정.
+
+        #웹 브라우저에서 폼을 통해 POST 방식으로 전송된 데이터에서 "title"과 "body" 값을 꺼내오는 역할
         title = request.POST.get("title", "")
         body = request.POST.get("body", "")
+        '''
+        request.POST: POST 방식으로 전송된 모든 데이터를 담고 있는 딕셔너리와 비슷한 객체입니다.
+        get("title", ""): POST 데이터에서 "title"이라는 키를 찾아 그 값을 가져오는데, 만약 해당 키가 없다면 기본값인 빈 문자열("")을 반환합니다.
+        get("body", ""): "body" 데이터도 같은 방식으로 가져옵니다.
+        사용자가 폼에 입력한 제목과 본문을 각각 title 변수와 body 변수에 저장하게된다.
+        '''
 
-        # 추출한 데이터를 사용해 새 Topic 객체를 데이터베이스에 저장합니다.
+
+        # 추출한 데이터를 사용해 새 Topic 객체를 데이터베이스에 저장한다.
         Topic.objects.create(title=title, body=body)
+        '''title=title은 "Topic 모델의 title 필드에, 폼에서 전달된 title 변수의 값을 넣어라"라는 의미'''
 
-        # 새 Article 생성 후, /create/ 페이지로 이동(리다이렉트)하여 갱신된 목록을 보여줍니다.
+        # 새 Article 생성 후, /create/ 페이지로 이동(리다이렉트)하여 갱신된 목록을 보여준다.
         return redirect("/create/")
