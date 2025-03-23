@@ -1,0 +1,12 @@
+<!-- users/templates/users/read.html -->
+{% extends 'users/base.html' %}
+
+{% block content %}
+  <h2>{{ topic.title }}</h2>
+  <p>{{ topic.body }}</p>
+  <form method="post" action="{% url 'delete' %}">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{ topic.id }}">
+    <input class="btn btn-danger" type="submit" value="delete">
+  </form>
+{% endblock content %}
